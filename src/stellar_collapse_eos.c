@@ -15,8 +15,7 @@ stellar_collapse_eos *
 read_stellar_collapse_eos_table(const char *filepath)
 {
     hid_t file_id = H5Fopen(filepath, H5F_ACC_RDONLY, H5P_DEFAULT);
-    if(file_id < 0)
-    {
+    if(file_id < 0) {
         fprintf(stderr, "Error: could not open file '%s'\n", filepath);
         exit(1);
     }
@@ -35,8 +34,7 @@ read_stellar_collapse_eos_table(const char *filepath)
     table->log10_rho         = (f64 *)read_hdf5_dataset(file_id, F64, "logrho");
 
     // Tabulated data
-    for(u32 n = 0; n < number_of_table_quantities; n++)
-    {
+    for(u32 n = 0; n < number_of_table_quantities; n++) {
         table->data[n] = (f64 *)read_hdf5_dataset(file_id, F64, dataset_names[n]);
     }
 
@@ -49,8 +47,7 @@ void
 write_stellar_collapse_eos_table(const char *filepath, const stellar_collapse_eos *table)
 {
     hid_t file_id = H5Fcreate(filepath, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
-    if(file_id < 0)
-    {
+    if(file_id < 0) {
         fprintf(stderr, "Error: could not open file '%s'\n", filepath);
         exit(1);
     }
@@ -61,7 +58,7 @@ write_stellar_collapse_eos_table(const char *filepath, const stellar_collapse_eo
     write_hdf5_dataset(file_id, I32, 1, dims, &table->n_rho, "pointsrho");
     write_hdf5_dataset(file_id, I32, 1, dims, &table->n_temperature, "pointstemp");
     write_hdf5_dataset(file_id, I32, 1, dims, &table->n_ye, "pointsye");
-    write_hdf5_dataset(file_id, I32, 1, dims, &table->energy_shift, "energy_shift");
+    write_hdf5_dataset(file_id, F64, 1, dims, &table->energy_shift, "energy_shift");
 
     // Basic tabulated quantities
     write_hdf5_dataset(file_id, F64, 1, dims + 1, table->ye, "ye");
@@ -69,9 +66,56 @@ write_stellar_collapse_eos_table(const char *filepath, const stellar_collapse_eo
     write_hdf5_dataset(file_id, F64, 1, dims + 3, table->log10_rho, "logrho");
 
     // Tabulated data
-    for(u32 n = 0; n < number_of_table_quantities; n++)
-    {
+    for(u32 n = 0; n < number_of_table_quantities; n++) {
         write_hdf5_dataset(file_id, F64, 3, dims + 1, table->data[n], dataset_names[n]);
     }
+}
 
+void
+free_stellar_collapse_eos_table(stellar_collapse_eos *table)
+{
+    if(!table) {
+        return;
+    }
+    for(u32 n = 0; n < number_of_table_quantities; n++) {
+        if(table->data[n]) {
+            free(table->data[n]);
+        }
+    }
+    free(table);
+}
+
+#define CHECK_SCALAR(name)                                                                                             \
+    if(table1->name != table2->name) {                                                                                 \
+        fprintf(stderr, "Error in %s: %g != %g\n", #name, (f64)table1->name, (f64)table2->name);                       \
+        exit(1);                                                                                                       \
+    }
+
+void
+ensure_tables_are_equal_or_error(const char *filepath1, const char *filepath2)
+{
+    stellar_collapse_eos *table1 = read_stellar_collapse_eos_table(filepath1);
+    stellar_collapse_eos *table2 = read_stellar_collapse_eos_table(filepath2);
+
+    CHECK_SCALAR(n_rho);
+    CHECK_SCALAR(n_temperature);
+    CHECK_SCALAR(n_ye);
+    CHECK_SCALAR(energy_shift);
+
+    const u32 size = table1->n_rho * table1->n_temperature * table1->n_ye;
+    for(u32 n = 0; n < number_of_table_quantities; n++) {
+        DEBUG_PRINT("Validating dataset '%-9s'.......", dataset_names[n]);
+        for(u32 i = 0; i < size; i++) {
+            if(table1->data[n][i] != table2->data[n][i]) {
+                fprintf(stderr, "\nError in %s: %g != %g\n", dataset_names[n], table1->data[n][i], table2->data[n][i]);
+                exit(1);
+            }
+        }
+        DEBUG_PRINT("OK\n");
+    }
+
+    free_stellar_collapse_eos_table(table1);
+    free_stellar_collapse_eos_table(table2);
+
+    puts("All tests passed!");
 }

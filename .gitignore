@@ -7,6 +7,9 @@
 # Compiled Object files
 **/*.o
 
+# HDF5 files
+**/*.h5
+
 # Ignored directories
 build/
 .cache/

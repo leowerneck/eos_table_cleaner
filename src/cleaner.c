@@ -8,8 +8,7 @@ int
 main(int argc, char **argv)
 {
 
-    if(argc != 2)
-    {
+    if(argc != 2) {
         fprintf(stderr, "Usage: %s <input table>\n", argv[0]);
         exit(0);
     }
@@ -21,6 +20,8 @@ main(int argc, char **argv)
     write_stellar_collapse_eos_table("test.h5", table);
 
     free(table);
+
+    ensure_tables_are_equal_or_error(argv[1], "test.h5");
 
     puts("All done!");
     return 0;

@@ -19,6 +19,7 @@ BinPackArguments: false                          # clang-format v.3.7
 BinPackParameters: false                         # clang-format v.3.7
 BraceWrapping:                                   # clang-format v.3.8
   AfterCaseLabel:        true                    # clang-format v.3.8
+  AfterControlStatement: Never                   # clang-format v.3.8
   SplitEmptyFunction:    false                   # clang-format v.3.8
 BreakAfterReturnType: TopLevelDefinitions        # clang-format v.19
 BreakConstructorInitializers: AfterColon         # clang-format v.5
@@ -27,7 +28,6 @@ IndentCaseLabels: true                           # clang-format v.3.3
 IndentPPDirectives: AfterHash                    # clang-format v.6
 InsertBraces: true                               # clang-format v.15
 InsertTrailingCommas: Wrapped                    # clang-format v.11
-FixNamespaceComments: true
 PackConstructorInitializers: Never               # clang-format v.14
 SeparateDefinitionBlocks: Always                 # clang-format v.14
 SpaceAfterTemplateKeyword: false                 # clang-format v.4

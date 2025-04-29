@@ -14,8 +14,7 @@ static void *
 malloc_or_error(const size_t size)
 {
     void *ptr = malloc(size);
-    if(!ptr)
-    {
+    if(!ptr) {
         fprintf(stderr, "Error: could not allocate %lu bytes.\n", size);
         exit(out_of_memory);
     }

@@ -44,4 +44,6 @@ void write_stellar_collapse_eos_table(const char *filepath, const stellar_collap
 
 void free_stellar_collapse_eos_table(stellar_collapse_eos *table);
 
+void ensure_tables_are_equal_or_error(const char *filepath1, const char *filepath2);
+
 #endif // STELLAR_COLLAPSE_EOS_H
