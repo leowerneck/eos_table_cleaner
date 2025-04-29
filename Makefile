@@ -38,8 +38,8 @@ DEP      := $(OBJ:.o=.d)
 all: debug
 
 # Build types: Debug and Release
-debug:   CFLAGS += -O0  # No optimization for easier debugging
-release: CFLAGS += -O3  # Full optimization for performance
+debug:   CFLAGS += -O0
+release: CFLAGS += -O3 -DNDEBUG
 debug release: $(PROJECT)
 
 $(PROJECT): $(OBJ)

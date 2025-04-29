@@ -10,10 +10,19 @@ typedef enum
     F64
 } dataset_type;
 
-void *read_hdf5_dataset(hid_t file_id, char *dataset_name, dataset_type dtype);
+void *read_hdf5_dataset(hid_t file_id, dataset_type dtype, const char *dataset_name);
+
+void write_hdf5_dataset(
+    hid_t          file_id,
+    dataset_type   dtype,
+    int            ndims,
+    const hsize_t *dims,
+    const void    *data,
+    const char    *dataset_name
+);
 
 #ifdef NDEBUG
-#    define DEBUG_PRINT (void)
+#    define DEBUG_PRINT(...)
 #else
 #    define DEBUG_PRINT printf
 #endif

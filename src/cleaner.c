@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "hdf5_helpers.h"
 #include "stellar_collapse_eos.h"
+#include "table_cleaner.h"
 
 int
 main(int argc, char **argv)
@@ -10,20 +10,18 @@ main(int argc, char **argv)
 
     if(argc != 2)
     {
-        fprintf(stderr, "Usage: ./eos_cleaner <input table>\n");
+        fprintf(stderr, "Usage: %s <input table>\n", argv[0]);
         exit(0);
     }
 
-    hid_t file_id = H5Fopen(argv[1], H5F_ACC_RDONLY, H5P_DEFAULT);
-    if(file_id < 0)
-    {
-        fprintf(stderr, "Error opening file: %s\n", argv[1]);
-        return 1;
-    }
+    stellar_collapse_eos *table = read_stellar_collapse_eos_table(argv[1]);
 
-    H5Fclose(file_id);
+    clean_table(table);
+
+    write_stellar_collapse_eos_table("test.h5", table);
+
+    free(table);
 
     puts("All done!");
-
     return 0;
 }

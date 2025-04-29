@@ -5,57 +5,42 @@
 
 typedef enum
 {
-    logpress,
-    logenergy,
-    entropy,
-    munu,
-    cs2,
-    dedt,
-    dpdrhoe,
-    dpderho,
-    muhat,
-    mu_e,
-    mu_p,
-    mu_n,
+    Abar,
+    X3he,
+    X4li,
     Xa,
+    Xd,
     Xh,
     Xn,
     Xp,
-    Abar,
+    Xt,
     Zbar,
-    Gamma,
+    cs2,
+    dedt,
+    dpderho,
+    dpdrhoe,
+    entropy,
+    gamma,
+    logenergy,
+    logpress,
+    mu_e,
+    mu_n,
+    mu_p,
+    muhat,
+    munu,
     number_of_table_quantities
 } stellar_collapse_eos_quantity;
 
-static const char *table_var_names[number_of_table_quantities] = {
-    "logpress",
-    "logenergy",
-    "entropy",
-    "munu",
-    "cs2",
-    "dedt",
-    "dpdrhoe",
-    "dpderho",
-    "muhat",
-    "mu_e",
-    "mu_p",
-    "mu_n",
-    "Xa",
-    "Xh",
-    "Xn",
-    "Xp",
-    "Abar",
-    "Zbar",
-    "Gamma"
-};
-
 typedef struct
 {
-    usize n_rho, n_temperature, n_ye;
-    f64  *data;
+    i32  n_rho, n_temperature, n_ye;
+    f64 *log10_rho, *log10_temperature, *ye, energy_shift;
+    f64 *data[number_of_table_quantities];
 } stellar_collapse_eos;
 
 stellar_collapse_eos *read_stellar_collapse_eos_table(const char *filepath);
+
+void write_stellar_collapse_eos_table(const char *filepath, const stellar_collapse_eos *table);
 
 void free_stellar_collapse_eos_table(stellar_collapse_eos *table);
 
