@@ -3,14 +3,6 @@
 
 #include "basic_types.h"
 
-#ifdef NDEBUG
-#    define DEBUG_PRINT(...)
-#    define DEBUG_FLUSH(...)
-#else
-#    define DEBUG_PRINT printf
-#    define DEBUG_FLUSH fflush
-#endif
-
 typedef enum
 {
     eos_Abar,
@@ -51,11 +43,5 @@ void free_stellar_collapse_eos_table(stellar_collapse_eos *table);
 void ensure_tables_are_equal_or_error(const char *filepath1, const char *filepath2);
 
 void recompute_cs2(stellar_collapse_eos *table);
-
-#define RECOMPUTE_CS2(table)                                                                                           \
-    DEBUG_PRINT("Recomputing cs2...");                                                                                 \
-    DEBUG_FLUSH(stdout);                                                                                               \
-    recompute_cs2(table);                                                                                              \
-    DEBUG_PRINT("OK\n");
 
 #endif // STELLAR_COLLAPSE_EOS_H

@@ -4,24 +4,31 @@
 
 #include "median_filter.h"
 #include "stellar_collapse_eos.h"
+#include "utils.h"
 
 int
 main(int argc, char **argv)
 {
 
     if(argc < 2 || argc > 3) {
-        fprintf(stderr, "Usage: %s <input file> [output file]\n", argv[0]);
-        exit(0);
+        info("Usage: %s <input file> [output file]\n", argv[0]);
+        return 0;
     }
 
     stellar_collapse_eos *table = read_stellar_collapse_eos_table(argv[1]);
-    printf("Successfully read table from file '%s'\n", argv[1]);
+    info("Successfully read table from file '%s'\n", argv[1]);
 
-    puts("Cleaning up...");
-    APPLY_MEDIAN_FILTER(table, eos_dpdrhoe);
-    APPLY_MEDIAN_FILTER(table, eos_dpderho);
-    APPLY_MEDIAN_FILTER(table, eos_dedt);
-    RECOMPUTE_CS2(table);
+    info("Applying median filter to dPdrho_e\n");
+    apply_median_filter(table, eos_dpdrhoe);
+
+    info("Applying median filter to dPde_rho\n");
+    apply_median_filter(table, eos_dpderho);
+
+    info("Applying median filter to dedT\n");
+    apply_median_filter(table, eos_dedt);
+
+    info("Recomputing cs2\n");
+    recompute_cs2(table);
 
     char outfile[1024] = {0};
     if(argc == 2) {
@@ -36,10 +43,10 @@ main(int argc, char **argv)
         sprintf(outfile, "%s", argv[2]);
     }
     write_stellar_collapse_eos_table(table, outfile);
-    printf("Successfully wrote clean table to file '%s'\n", outfile);
+    info("Successfully wrote clean table to file '%s'\n", outfile);
 
     free(table);
 
-    puts("All done!");
+    info("All done!\n");
     return 0;
 }

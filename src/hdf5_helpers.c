@@ -56,11 +56,11 @@ read_hdf5_dataset(hid_t file_id, dataset_type dtype, const char *dataset_name)
     H5Sclose(dataspace_id);
     H5Dclose(dataset_id);
 
-    DEBUG_PRINT("Successfully read dataset '%-12s' with dimensions: {%llu", dataset_name, dims[0]);
+    debug("Successfully read dataset '%-12s' with dimensions: {%llu", dataset_name, dims[0]);
     for(int i = 1; i < ndims; i++) {
-        DEBUG_PRINT(", %llu", dims[i]);
+        debug(", %llu", dims[i]);
     }
-    DEBUG_PRINT("}\n");
+    debug("}\n");
 
     return array;
 }
@@ -104,9 +104,9 @@ write_hdf5_dataset(
     H5Dclose(dataset_id);
     H5Sclose(dataspace_id);
 
-    DEBUG_PRINT("Successfully wrote dataset '%-12s' with dimensions: {%llu", dataset_name, dims[0]);
+    debug("Successfully wrote dataset '%-12s' with dimensions: {%llu", dataset_name, dims[0]);
     for(int i = 1; i < ndims; i++) {
-        DEBUG_PRINT(", %llu", dims[i]);
+        debug(", %llu", dims[i]);
     }
-    DEBUG_PRINT("}\n");
+    debug("}\n");
 }

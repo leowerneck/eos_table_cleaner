@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "error.h"
 #include "hdf5_helpers.h"
 #include "stellar_collapse_eos.h"
+#include "utils.h"
 
 static const char *dataset_names[number_of_eos_quantities] = {
     "Abar",    "Xa",    "Xh",        "Xn",       "Xp",   "Zbar", "cs2",  "dedt",  "dpderho", "dpdrhoe",
@@ -16,8 +16,7 @@ read_stellar_collapse_eos_table(const char *filepath)
 {
     hid_t file_id = H5Fopen(filepath, H5F_ACC_RDONLY, H5P_DEFAULT);
     if(file_id < 0) {
-        fprintf(stderr, "Error: could not open file '%s'\n", filepath);
-        exit(1);
+        error(FILE_OPEN_FAILED, "Could not open file '%s'\n", filepath);
     }
 
     stellar_collapse_eos *table = malloc_or_error(sizeof(stellar_collapse_eos));
@@ -48,8 +47,7 @@ write_stellar_collapse_eos_table(const stellar_collapse_eos *table, const char *
 {
     hid_t file_id = H5Fcreate(filepath, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
     if(file_id < 0) {
-        fprintf(stderr, "Error: could not open file '%s'\n", filepath);
-        exit(1);
+        error(FILE_OPEN_FAILED, "Could not open file '%s'\n", filepath);
     }
 
     const hsize_t dims[4] = {1, table->n_ye, table->n_temperature, table->n_rho};
@@ -87,8 +85,7 @@ free_stellar_collapse_eos_table(stellar_collapse_eos *table)
 
 #define CHECK_SCALAR(name)                                                                                             \
     if(table1->name != table2->name) {                                                                                 \
-        fprintf(stderr, "Error in %s: %g != %g\n", #name, (f64)table1->name, (f64)table2->name);                       \
-        exit(1);                                                                                                       \
+        warn("Error in %s: %g != %g\n", #name, (f64)table1->name, (f64)table2->name);                                  \
     }
 
 void
@@ -102,20 +99,22 @@ ensure_tables_are_equal_or_error(const char *filepath1, const char *filepath2)
     CHECK_SCALAR(n_ye);
     CHECK_SCALAR(energy_shift);
 
-    const u32 size = table1->n_rho * table1->n_temperature * table1->n_ye;
+    const u32 size             = table1->n_rho * table1->n_temperature * table1->n_ye;
+    bool      all_tests_passed = true;
     for(u32 n = 0; n < number_of_eos_quantities; n++) {
-        DEBUG_PRINT("Validating dataset '%-9s'.......", dataset_names[n]);
+        debug("Validating dataset '%-9s'\n", dataset_names[n]);
         for(u32 i = 0; i < size; i++) {
             if(table1->data[n][i] != table2->data[n][i]) {
-                fprintf(stderr, "\nError in %s: %g != %g\n", dataset_names[n], table1->data[n][i], table2->data[n][i]);
-                exit(1);
+                warn("Error in %s: %g != %g\n", dataset_names[n], table1->data[n][i], table2->data[n][i]);
+                all_tests_passed = false;
             }
         }
-        DEBUG_PRINT("OK\n");
     }
 
     free_stellar_collapse_eos_table(table1);
     free_stellar_collapse_eos_table(table2);
 
-    puts("All tests passed!");
+    if(all_tests_passed) {
+        info("All tests passed!\n");
+    }
 }

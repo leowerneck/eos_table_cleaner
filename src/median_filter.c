@@ -2,8 +2,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "error.h"
+#include "basic_types.h"
 #include "median_filter.h"
+#include "utils.h"
 
 static inline i32
 compare_f64(const void *ap, const void *bp)
@@ -39,8 +40,13 @@ median_filter_find_median(const u32 size, f64 *buffer)
 }
 
 void
-median_filter(const u32 nr, const u32 nt, const u32 ny, f64 *deriv)
+apply_median_filter(stellar_collapse_eos *table, stellar_collapse_eos_quantity name)
 {
+
+    const u32 nr    = table->n_rho;
+    const u32 nt    = table->n_temperature;
+    const u32 ny    = table->n_ye;
+    f64      *deriv = table->data[name];
 
     size_t size = sizeof(f64) * nr * nt * ny;
     f64   *in   = (f64 *)malloc_or_error(size);
@@ -51,7 +57,7 @@ median_filter(const u32 nr, const u32 nt, const u32 ny, f64 *deriv)
     for(u32 iy = MF_W; iy < ny - MF_W; ++iy) {
         for(u32 it = MF_W; it < nt - MF_W; ++it) {
             for(u32 ir = MF_W; ir < nr - MF_W; ++ir) {
-                f64 buffer[MF_S];
+                f64       buffer[MF_S];
                 const u32 index = INDEX(ir, it, iy);
                 median_filter_fill_buffer(nr, nt, MF_W, ir, it, iy, in, buffer);
                 const f64  avg = median_filter_find_median(MF_S, buffer);

@@ -1,6 +1,7 @@
 #include <float.h>
 #include <math.h>
 
+#include "basic_types.h"
 #include "stellar_collapse_eos.h"
 
 #define INDEX(ir, it, iy) (ir + table->n_rho * (it + table->n_temperature * iy))
@@ -25,7 +26,7 @@ recompute_cs2(stellar_collapse_eos *table)
                 }
 
                 // Compute the w = h * rho, where h is the enthalpy
-                const f64 w = rho*(1.0 + eps) + press;
+                const f64 w = rho * (1.0 + eps) + press;
 
                 // Recompute cs2
                 table->data[eos_cs2][index] = bulk_modulus / w;
