@@ -7,8 +7,8 @@
 #include "stellar_collapse_eos.h"
 
 static const char *dataset_names[number_of_table_quantities] = {
-    "Abar",    "X3he",    "X4li",    "Xa",    "Xd",        "Xh",       "Xn",   "Xp",   "Xt",   "Zbar",  "cs2",  "dedt",
-    "dpderho", "dpdrhoe", "entropy", "gamma", "logenergy", "logpress", "mu_e", "mu_n", "mu_p", "muhat", "munu",
+    "Abar",    "Xa",    "Xh",        "Xn",       "Xp",   "Zbar", "cs2",  "dedt",  "dpderho", "dpdrhoe",
+    "entropy", "gamma", "logenergy", "logpress", "mu_e", "mu_n", "mu_p", "muhat", "munu",
 };
 
 stellar_collapse_eos *
@@ -44,7 +44,7 @@ read_stellar_collapse_eos_table(const char *filepath)
 }
 
 void
-write_stellar_collapse_eos_table(const char *filepath, const stellar_collapse_eos *table)
+write_stellar_collapse_eos_table(const stellar_collapse_eos *table, const char *filepath)
 {
     hid_t file_id = H5Fcreate(filepath, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
     if(file_id < 0) {

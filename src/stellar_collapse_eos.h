@@ -12,14 +12,10 @@
 typedef enum
 {
     Abar,
-    X3he,
-    X4li,
     Xa,
-    Xd,
     Xh,
     Xn,
     Xp,
-    Xt,
     Zbar,
     cs2,
     dedt,
@@ -46,7 +42,7 @@ typedef struct
 
 stellar_collapse_eos *read_stellar_collapse_eos_table(const char *filepath);
 
-void write_stellar_collapse_eos_table(const char *filepath, const stellar_collapse_eos *table);
+void write_stellar_collapse_eos_table(const stellar_collapse_eos *table, const char *filepath);
 
 void free_stellar_collapse_eos_table(stellar_collapse_eos *table);
 
