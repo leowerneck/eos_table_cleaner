@@ -2,7 +2,6 @@
 #define HDF5_HELPERS_H
 
 #include <hdf5.h>
-#include <stdio.h>
 
 typedef enum
 {
