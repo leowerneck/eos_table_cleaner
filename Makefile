@@ -14,7 +14,7 @@ HDF5_LIB  = $(shell pkg-config --libs hdf5)
 # Compilation flags
 CFLAGS   ?= -std=c99 -g2 -march=native -Wall -Wextra -pedantic -Werror
 INCLUDES  = $(addprefix -I,$(INC_DIRS)) $(HDF5_INC)
-LDFLAGS  += $(HDF5_LIB)
+LDFLAGS  += $(HDF5_LIB) -lm
 
 # Set compiler (override default c++ to avoid macOS using Apple Clang)
 CC ?= gcc
