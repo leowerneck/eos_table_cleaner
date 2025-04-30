@@ -53,7 +53,9 @@ apply_median_filter(stellar_collapse_eos *table, stellar_collapse_eos_quantity n
     memcpy(in, deriv, size);
 
     // filter, overwriting as needed
+#ifdef _OPENMP
 #pragma omp parallel for collapse(3)
+#endif
     for(u32 iy = MF_W; iy < ny - MF_W; ++iy) {
         for(u32 it = MF_W; it < nt - MF_W; ++it) {
             for(u32 ir = MF_W; ir < nr - MF_W; ++ir) {
