@@ -13,7 +13,7 @@ make
 ## Dependencies
 
 The EOS cleaner's only true dependency is [HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format). To compile the code, you will need:
-* a C compiler (e.g., gcc), preferably with OpenMP support;
+* a C compiler (e.g., gcc), preferably with OpenMP support
 * make
 * pkg-config
 * HDF5
