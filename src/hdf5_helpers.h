@@ -21,10 +21,4 @@ void write_hdf5_dataset(
     const char    *dataset_name
 );
 
-#ifdef NDEBUG
-#    define DEBUG_PRINT(...)
-#else
-#    define DEBUG_PRINT printf
-#endif
-
 #endif // HDF5_HELPERS_H

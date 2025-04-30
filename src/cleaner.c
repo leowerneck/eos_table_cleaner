@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "stellar_collapse_eos.h"
-#include "table_cleaner.h"
+#include "median_filter.h"
 
 int
 main(int argc, char **argv)
@@ -15,7 +15,9 @@ main(int argc, char **argv)
 
     stellar_collapse_eos *table = read_stellar_collapse_eos_table(argv[1]);
 
-    clean_table(table);
+    APPLY_MEDIAN_FILTER(table, dpdrhoe);
+    APPLY_MEDIAN_FILTER(table, dpderho);
+    APPLY_MEDIAN_FILTER(table, dedt);
 
     write_stellar_collapse_eos_table("test.h5", table);
 

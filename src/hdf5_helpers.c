@@ -1,5 +1,6 @@
 #include "hdf5_helpers.h"
 #include "basic_types.h"
+#include "stellar_collapse_eos.h"
 
 #include <stdlib.h>
 

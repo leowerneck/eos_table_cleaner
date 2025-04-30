@@ -3,6 +3,12 @@
 
 #include "basic_types.h"
 
+#ifdef NDEBUG
+#    define DEBUG_PRINT(...)
+#else
+#    define DEBUG_PRINT printf
+#endif
+
 typedef enum
 {
     Abar,
