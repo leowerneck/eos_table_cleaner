@@ -47,10 +47,11 @@ median_filter(const u32 nr, const u32 nt, const u32 ny, f64 *deriv)
     memcpy(in, deriv, size);
 
     // filter, overwriting as needed
-    f64 buffer[MF_S];
+#pragma omp parallel for collapse(3)
     for(u32 iy = MF_W; iy < ny - MF_W; ++iy) {
         for(u32 it = MF_W; it < nt - MF_W; ++it) {
             for(u32 ir = MF_W; ir < nr - MF_W; ++ir) {
+                f64 buffer[MF_S];
                 const u32 index = INDEX(ir, it, iy);
                 median_filter_fill_buffer(nr, nt, MF_W, ir, it, iy, in, buffer);
                 const f64  avg = median_filter_find_median(MF_S, buffer);

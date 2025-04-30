@@ -6,7 +6,7 @@
 #include "hdf5_helpers.h"
 #include "stellar_collapse_eos.h"
 
-static const char *dataset_names[number_of_table_quantities] = {
+static const char *dataset_names[number_of_eos_quantities] = {
     "Abar",    "Xa",    "Xh",        "Xn",       "Xp",   "Zbar", "cs2",  "dedt",  "dpderho", "dpdrhoe",
     "entropy", "gamma", "logenergy", "logpress", "mu_e", "mu_n", "mu_p", "muhat", "munu",
 };
@@ -34,7 +34,7 @@ read_stellar_collapse_eos_table(const char *filepath)
     table->log10_rho         = (f64 *)read_hdf5_dataset(file_id, F64, "logrho");
 
     // Tabulated data
-    for(u32 n = 0; n < number_of_table_quantities; n++) {
+    for(u32 n = 0; n < number_of_eos_quantities; n++) {
         table->data[n] = (f64 *)read_hdf5_dataset(file_id, F64, dataset_names[n]);
     }
 
@@ -66,7 +66,7 @@ write_stellar_collapse_eos_table(const stellar_collapse_eos *table, const char *
     write_hdf5_dataset(file_id, F64, 1, dims + 3, table->log10_rho, "logrho");
 
     // Tabulated data
-    for(u32 n = 0; n < number_of_table_quantities; n++) {
+    for(u32 n = 0; n < number_of_eos_quantities; n++) {
         write_hdf5_dataset(file_id, F64, 3, dims + 1, table->data[n], dataset_names[n]);
     }
 }
@@ -77,7 +77,7 @@ free_stellar_collapse_eos_table(stellar_collapse_eos *table)
     if(!table) {
         return;
     }
-    for(u32 n = 0; n < number_of_table_quantities; n++) {
+    for(u32 n = 0; n < number_of_eos_quantities; n++) {
         if(table->data[n]) {
             free(table->data[n]);
         }
@@ -103,7 +103,7 @@ ensure_tables_are_equal_or_error(const char *filepath1, const char *filepath2)
     CHECK_SCALAR(energy_shift);
 
     const u32 size = table1->n_rho * table1->n_temperature * table1->n_ye;
-    for(u32 n = 0; n < number_of_table_quantities; n++) {
+    for(u32 n = 0; n < number_of_eos_quantities; n++) {
         DEBUG_PRINT("Validating dataset '%-9s'.......", dataset_names[n]);
         for(u32 i = 0; i < size; i++) {
             if(table1->data[n][i] != table2->data[n][i]) {

@@ -10,6 +10,7 @@
 #define INDEX(ir, it, iy) (ir + nr * (it + nt * iy))
 #define APPLY_MEDIAN_FILTER(table, deriv)                                                                              \
     DEBUG_PRINT("Applying median filter to %s.....", #deriv);                                                          \
+    DEBUG_FLUSH(stdout);                                                                                               \
     median_filter(table->n_rho, table->n_temperature, table->n_ye, table->data[deriv]);                                \
     DEBUG_PRINT("OK\n");
 

@@ -15,10 +15,13 @@ main(int argc, char **argv)
     }
 
     stellar_collapse_eos *table = read_stellar_collapse_eos_table(argv[1]);
+    printf("Successfully read table from file '%s'\n", argv[1]);
 
-    APPLY_MEDIAN_FILTER(table, dpdrhoe);
-    APPLY_MEDIAN_FILTER(table, dpderho);
-    APPLY_MEDIAN_FILTER(table, dedt);
+    puts("Cleaning up...");
+    APPLY_MEDIAN_FILTER(table, eos_dpdrhoe);
+    APPLY_MEDIAN_FILTER(table, eos_dpderho);
+    APPLY_MEDIAN_FILTER(table, eos_dedt);
+    RECOMPUTE_CS2(table);
 
     char outfile[1024] = {0};
     if(argc == 2) {
@@ -33,6 +36,7 @@ main(int argc, char **argv)
         sprintf(outfile, "%s", argv[2]);
     }
     write_stellar_collapse_eos_table(table, outfile);
+    printf("Successfully wrote clean table to file '%s'\n", outfile);
 
     free(table);
 
