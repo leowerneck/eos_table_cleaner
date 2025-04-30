@@ -1,3 +1,10 @@
+/**
+ * @file basic_types.h
+ * @author Leo Werneck
+ *
+ * @brief This file provides useful redefinitions of basic types.
+ */
+
 #ifndef BASIC_TYPES_H
 #define BASIC_TYPES_H
 
