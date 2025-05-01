@@ -39,7 +39,7 @@ all: release
 
 # Build types: Debug and Release
 debug:   CFLAGS += -O0
-release: CFLAGS += -O3 -DNDEBUG -fopenmp
+release: CFLAGS += -O2 -DNDEBUG -fopenmp
 debug release: $(PROJECT)
 
 $(PROJECT): $(OBJ)

@@ -9,6 +9,10 @@
 
 #include "basic_types.h"
 
+#define SPEED_OF_LIGHT_SI          (299792458.0)
+#define SPEED_OF_LIGHT_CGS         (SPEED_OF_LIGHT_SI * 100.0)
+#define SPEED_OF_LIGHT_SQUARED_CGS (SPEED_OF_LIGHT_CGS * SPEED_OF_LIGHT_CGS)
+
 /**
  * @brief Enum defining the various quantities available in the EOS table.
  */
@@ -98,5 +102,16 @@ void ensure_tables_are_equal_or_error(const char *filepath1, const char *filepat
  * @param table Pointer to the stellar_collapse_eos structure where cs2 will be recomputed.
  */
 void recompute_cs2(stellar_collapse_eos *table);
+
+/**
+ * @brief Verifies the EOS table data for physical validity and finiteness.
+ *
+ * This function checks all tabulated quantities within the provided EOS table to ensure they are finite (not NaN
+ * or infinity) and adhere to expected physical constraints (e.g., positivity of certain quantities).
+ * If any inconsistencies or invalid values are found, the function will print warning messages.
+ *
+ * @param table Pointer to the stellar_collapse_eos structure that will be validated.
+ */
+void validate_table(stellar_collapse_eos *table);
 
 #endif // STELLAR_COLLAPSE_EOS_H

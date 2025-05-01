@@ -95,4 +95,24 @@ void *malloc_or_error(const size_t size);
     fprintf(stderr, "(error) File: %s\n(error) Line: %d\n(error) Func: %s\n", __FILE__, __LINE__, __func__);           \
     error(key, format, ##__VA_ARGS__)
 
+#define CHECK_FINITE(new, old, func)                                                                                   \
+    if(is##func(new)) {                                                                                                \
+        if(is##func(old)) {                                                                                            \
+            warn("%llu: BAD - both are %s\n", index, #func);                                                           \
+        }                                                                                                              \
+        else {                                                                                                         \
+            warn("%llu: WORSE - new is %s\n", index, #func);                                                           \
+        }                                                                                                              \
+    }
+
+#define CHECK_BOUNDS(new, old, op, bound)                                                                              \
+    if((new)op(bound)) {                                                                                               \
+        if((old)op(bound)) {                                                                                           \
+            warn("%llu: BAD - both are %s %g\n", index, #op, (bound));                                                 \
+        }                                                                                                              \
+        else {                                                                                                         \
+            warn("%llu: WORSE - new is %s %g\n", index, #op, (bound));                                                 \
+        }                                                                                                              \
+    }
+
 #endif // UTILS_H

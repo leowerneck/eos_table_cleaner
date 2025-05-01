@@ -1,5 +1,6 @@
 #include <float.h>
 #include <math.h>
+#include <stdbool.h>
 
 #include "basic_types.h"
 #include "stellar_collapse_eos.h"
@@ -9,6 +10,12 @@
 void
 recompute_cs2(stellar_collapse_eos *table)
 {
+    // TODO(LRW): detect this from the table, if possible, or make it an option
+    const bool relativistic_cs2 = true;
+
+#ifdef _OPENMP
+#pragma omp parallel for collapse(3)
+#endif
     for(i32 iy = 0; iy < table->n_ye; ++iy) {
         for(i32 it = 0; it < table->n_temperature; ++it) {
             for(i32 ir = 0; ir < table->n_rho; ++ir) {
@@ -25,11 +32,15 @@ recompute_cs2(stellar_collapse_eos *table)
                     bulk_modulus = DBL_EPSILON;
                 }
 
-                // Compute the w = h * rho, where h is the enthalpy
-                const f64 w = rho * (1.0 + eps) + press;
+                // Compute the enthalp
+                const f64 h = SPEED_OF_LIGHT_SQUARED_CGS + eps + press / rho;
 
                 // Recompute cs2
-                table->data[eos_cs2][index] = bulk_modulus / w;
+                f64 cs2_new = bulk_modulus / rho;
+                if(relativistic_cs2) {
+                    cs2_new /= h;
+                }
+                table->data[eos_cs2][index] = cs2_new;
             }
         }
     }

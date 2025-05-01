@@ -30,6 +30,12 @@ main(int argc, char **argv)
     info("Recomputing cs2\n");
     recompute_cs2(table);
 
+    info("Validating table\n");
+    validate_table(table);
+    info("Validation algorithm complete! If you did not see any warnings, that\n");
+    info("means all tabulated quantities in the new table are free of nans and infs!\n");
+    info("In addition, it means cs2 is strictly positive and subluminal.\n");
+
     char outfile[1024] = {0};
     if(argc == 2) {
         // Remove .h5 from input file

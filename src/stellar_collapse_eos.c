@@ -1,5 +1,5 @@
 #include <hdf5.h>
-#include <stdio.h>
+#include <math.h>
 #include <stdlib.h>
 
 #include "hdf5_helpers.h"
@@ -116,5 +116,67 @@ ensure_tables_are_equal_or_error(const char *filepath1, const char *filepath2)
 
     if(all_tests_passed) {
         info("All tests passed!\n");
+    }
+}
+
+static u64
+validate_increasing_monotonically(const u64 size, const f64 *data, const char *name)
+{
+    u64 count = 0;
+    for(u32 i = 1; i < size; i++) {
+        const f64 left  = data[i - 1];
+        const f64 right = data[i];
+        if(left > right) {
+            warn("%s not increasing monotonically! %g > %g\n", name, left, right);
+            count++;
+        }
+    }
+    if(count) {
+        warn("Found %lu problematic points in %lu for %s\n", count, size, name);
+    }
+    return count;
+}
+
+#define CHECK_DATASETS_ARE_FINITE(func)                                                                                \
+    for(u32 n = 0; n < number_of_eos_quantities; n++) {                                                                \
+        const char *name         = dataset_names[n];                                                                   \
+        u64         local_errors = 0;                                                                                  \
+        for(u64 i = 0; i < size; i++) {                                                                                \
+            if(isnan(table->data[n][i])) {                                                                             \
+                warn("Found %s in dataset '%s', index %lu\n", #func, name, i);                                         \
+                local_errors++;                                                                                        \
+            }                                                                                                          \
+        }                                                                                                              \
+        if(local_errors) {                                                                                             \
+            warn("Dataset '%s' has %lu %ss out of %lu points\n", name, local_errors, #func, size);                     \
+        }                                                                                                              \
+        else {                                                                                                         \
+            debug("Dataset '%s' does not contain %ss!\n", name, #func);                                                \
+        }                                                                                                              \
+    }
+
+void
+validate_table(stellar_collapse_eos *table)
+{
+    const u32 nr   = table->n_rho;
+    const u32 nt   = table->n_temperature;
+    const u32 ny   = table->n_ye;
+    const u32 size = nr * nt * ny;
+
+    validate_increasing_monotonically(nr, table->log10_rho, "logrho");
+    validate_increasing_monotonically(nt, table->log10_temperature, "logtemp");
+    validate_increasing_monotonically(ny, table->ye, "ye");
+
+    CHECK_DATASETS_ARE_FINITE(nan);
+    CHECK_DATASETS_ARE_FINITE(inf);
+
+    for(u64 i = 0; i < size; i++) {
+        const f64 cs2 = table->data[eos_cs2][i];
+        if(cs2 < 0) {
+            warn("Found negative cs2 at index %lu\n", i);
+        }
+        else if(cs2 > SPEED_OF_LIGHT_SQUARED_CGS) {
+            warn("Found superluminal cs2 at index %lu\n", i);
+        }
     }
 }
