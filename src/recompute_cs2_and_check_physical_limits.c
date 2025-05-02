@@ -48,7 +48,7 @@ recompute_cs2_and_check_physical_limits(stellar_collapse_eos *table)
                     superluminal_cs2 = true;
                 }
 
-                table->data[eos_cs2][index] = cs2_new / h;
+                table->data[eos_cs2][index] = cs2_new;
             }
         }
     }
