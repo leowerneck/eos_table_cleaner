@@ -38,7 +38,7 @@ DEP      := $(OBJ:.o=.d)
 all: release
 
 # Build types: Debug and Release
-debug:   CFLAGS += -O0
+debug:   CFLAGS += -O0 -fopenmp
 release: CFLAGS += -O2 -DNDEBUG -fopenmp
 debug release: $(PROJECT)
 

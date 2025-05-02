@@ -151,7 +151,7 @@ validate_increasing_monotonically(const u64 size, const f64 *data, const char *n
             warn("Dataset '%s' has %lu %ss out of %lu points\n", name, local_errors, #func, size);                     \
         }                                                                                                              \
         else {                                                                                                         \
-            debug("Dataset '%s' does not contain %ss!\n", name, #func);                                                \
+            info("Dataset '%s' does not contain %ss!\n", name, #func);                                                \
         }                                                                                                              \
     }
 

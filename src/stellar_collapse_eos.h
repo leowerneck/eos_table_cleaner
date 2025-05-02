@@ -101,7 +101,7 @@ void ensure_tables_are_equal_or_error(const char *filepath1, const char *filepat
  *
  * @param table Pointer to the stellar_collapse_eos structure where cs2 will be recomputed.
  */
-void recompute_cs2(stellar_collapse_eos *table);
+void recompute_cs2_and_check_physical_limits(stellar_collapse_eos *table);
 
 /**
  * @brief Verifies the EOS table data for physical validity and finiteness.

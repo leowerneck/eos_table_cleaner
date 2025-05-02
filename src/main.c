@@ -28,13 +28,10 @@ main(int argc, char **argv)
     apply_median_filter(table, eos_dedt);
 
     info("Recomputing cs2\n");
-    recompute_cs2(table);
+    recompute_cs2_and_check_physical_limits(table);
 
     info("Validating table\n");
     validate_table(table);
-    info("Validation algorithm complete! If you did not see any warnings, that\n");
-    info("means all tabulated quantities in the new table are free of nans and infs!\n");
-    info("In addition, it means cs2 is strictly positive and subluminal.\n");
 
     char outfile[1024] = {0};
     if(argc == 2) {

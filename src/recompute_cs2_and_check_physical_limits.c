@@ -4,17 +4,18 @@
 
 #include "basic_types.h"
 #include "stellar_collapse_eos.h"
+#include "utils.h"
 
 #define INDEX(ir, it, iy) (ir + table->n_rho * (it + table->n_temperature * iy))
 
 void
-recompute_cs2(stellar_collapse_eos *table)
+recompute_cs2_and_check_physical_limits(stellar_collapse_eos *table)
 {
-    // TODO(LRW): detect this from the table, if possible, or make it an option
-    const bool relativistic_cs2 = true;
 
+    bool negative_cs2     = false;
+    bool superluminal_cs2 = false;
 #ifdef _OPENMP
-#pragma omp parallel for collapse(3)
+#    pragma omp parallel for collapse(3) reduction(|| : negative_cs2, superluminal_cs2)
 #endif
     for(i32 iy = 0; iy < table->n_ye; ++iy) {
         for(i32 it = 0; it < table->n_temperature; ++it) {
@@ -32,16 +33,29 @@ recompute_cs2(stellar_collapse_eos *table)
                     bulk_modulus = DBL_EPSILON;
                 }
 
-                // Compute the enthalp
-                const f64 h = SPEED_OF_LIGHT_SQUARED_CGS + eps + press / rho;
-
-                // Recompute cs2
+                // Recompute cs2 and check physical bounds
                 f64 cs2_new = bulk_modulus / rho;
-                if(relativistic_cs2) {
-                    cs2_new /= h;
+
+                if(cs2_new < 0) {
+                    warn("Found negative cs2: %g (index %lu)\n", cs2_new, index);
+                    negative_cs2 = true;
                 }
-                table->data[eos_cs2][index] = cs2_new;
+
+                // Compute the enthalpy
+                const f64 h = SPEED_OF_LIGHT_SQUARED_CGS + eps + press / rho;
+                if((cs2_new / h) > SPEED_OF_LIGHT_SQUARED_CGS) {
+                    warn("Found superluminal cs2: %g (index %lu)\n", cs2_new / h / SPEED_OF_LIGHT_SQUARED_CGS, index);
+                    superluminal_cs2 = true;
+                }
+
+                table->data[eos_cs2][index] = cs2_new / h;
             }
         }
+    }
+    if(!negative_cs2) {
+        info("No points in the table have a negative cs2!\n");
+    }
+    if(!superluminal_cs2) {
+        info("No points in the table have a superluminal cs2!\n");
     }
 }
