@@ -12,7 +12,7 @@
 #define DELTASMOOTH       (10.0)                                             ///< Smoothing parameter delta.
 #define MF_W              (3)                                                ///< Median filter window half-width.
 #define MF_S              ((2 * MF_W + 1) * (2 * MF_W + 1) * (2 * MF_W + 1)) ///< Median filter window size.
-#define INDEX(ir, it, iy) (ir + nr * (it + nt * iy))                         ///< Macro for calculating 3D index.
+#define INDEX(ir, it, iy) ((ir) + nr * ((it) + nt * (iy)))                   ///< Macro for calculating 3D index.
 
 /**
  * @brief Applies a 3D median filter to a specified quantity in the EOS table.

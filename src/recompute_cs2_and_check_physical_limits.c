@@ -6,7 +6,7 @@
 #include "stellar_collapse_eos.h"
 #include "utils.h"
 
-#define INDEX(ir, it, iy) (ir + table->n_rho * (it + table->n_temperature * iy))
+#define INDEX(ir, it, iy) ((ir) + table->n_rho * ((it) + table->n_temperature * (iy)))
 
 void
 recompute_cs2_and_check_physical_limits(stellar_collapse_eos *table)
