@@ -14,12 +14,13 @@ recompute_cs2_and_check_physical_limits(stellar_collapse_eos *table)
 
     bool negative_cs2     = false;
     bool superluminal_cs2 = false;
+
 #ifdef _OPENMP
 #    pragma omp parallel for collapse(3) reduction(|| : negative_cs2, superluminal_cs2)
 #endif
-    for(i32 iy = 0; iy < table->n_ye; ++iy) {
-        for(i32 it = 0; it < table->n_temperature; ++it) {
-            for(i32 ir = 0; ir < table->n_rho; ++ir) {
+    for(i32 iy = 0; iy < table->n_ye; iy++) {
+        for(i32 it = 0; it < table->n_temperature; it++) {
+            for(i32 ir = 0; ir < table->n_rho; ir++) {
                 const u64 index    = INDEX(ir, it, iy);
                 const f64 rho      = pow(10.0, table->log10_rho[ir]);
                 const f64 press    = pow(10.0, table->data[eos_logpress][index]);

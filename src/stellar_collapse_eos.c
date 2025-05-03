@@ -169,14 +169,4 @@ validate_table(stellar_collapse_eos *table)
 
     CHECK_DATASETS_ARE_FINITE(nan);
     CHECK_DATASETS_ARE_FINITE(inf);
-
-    for(u64 i = 0; i < size; i++) {
-        const f64 cs2 = table->data[eos_cs2][i];
-        if(cs2 < 0) {
-            warn("Found negative cs2 at index %lu\n", i);
-        }
-        else if(cs2 > SPEED_OF_LIGHT_SQUARED_CGS) {
-            warn("Found superluminal cs2 at index %lu\n", i);
-        }
-    }
 }
