@@ -114,4 +114,8 @@ void recompute_cs2_and_check_physical_limits(stellar_collapse_eos *table);
  */
 void validate_table(stellar_collapse_eos *table);
 
+void recompute_derivs(stellar_collapse_eos *table);
+
+char *stellar_collapse_qty_to_str(stellar_collapse_eos_quantity qty);
+
 #endif // STELLAR_COLLAPSE_EOS_H

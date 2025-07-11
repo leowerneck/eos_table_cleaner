@@ -31,6 +31,9 @@ typedef enum
     HDF5_DATASET_WRITE_FAILED,    ///< Failed to write to an HDF5 dataset.
     HDF5_DATASET_CREATE_FAILED,   ///< Failed to create an HDF5 dataset.
     HDF5_DATASPACE_CREATE_FAILED, ///< Failed to create an HDF5 dataspace.
+    UNKNOWN_OPTION,
+    INVALID_SMOOTHER,
+    INVALID_DERIVS,
 } error_t;
 
 /**

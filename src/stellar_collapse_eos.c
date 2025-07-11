@@ -151,7 +151,7 @@ validate_increasing_monotonically(const u64 size, const f64 *data, const char *n
             warn("Dataset '%s' has %lu %ss out of %lu points\n", name, local_errors, #func, size);                     \
         }                                                                                                              \
         else {                                                                                                         \
-            info("Dataset '%s' does not contain %ss!\n", name, #func);                                                \
+            info("Dataset '%s' does not contain %ss!\n", name, #func);                                                 \
         }                                                                                                              \
     }
 
@@ -170,3 +170,58 @@ validate_table(stellar_collapse_eos *table)
     CHECK_DATASETS_ARE_FINITE(nan);
     CHECK_DATASETS_ARE_FINITE(inf);
 }
+
+void
+recompute_derivs(stellar_collapse_eos *table)
+{
+    (void)table;
+    warn("Function to recompute derivatives it not yet supported.\n");
+}
+
+char *
+stellar_collapse_qty_to_str(stellar_collapse_eos_quantity qty)
+{
+    switch(qty) {
+        case eos_Abar:
+            return "Abar";
+        case eos_Xa:
+            return "Xa";
+        case eos_Xh:
+            return "Xh";
+        case eos_Xn:
+            return "Xn";
+        case eos_Xp:
+            return "Xp";
+        case eos_Zbar:
+            return "Zbar";
+        case eos_cs2:
+            return "cs2";
+        case eos_dedt:
+            return "dedt";
+        case eos_dpderho:
+            return "dpderho";
+        case eos_dpdrhoe:
+            return "dpdrhoe";
+        case eos_entropy:
+            return "entropy";
+        case eos_gamma:
+            return "gamma";
+        case eos_logenergy:
+            return "logenergy";
+        case eos_logpress:
+            return "logpress";
+        case eos_mu_e:
+            return "mu_e";
+        case eos_mu_n:
+            return "mu_n";
+        case eos_mu_p:
+            return "mu_p";
+        case eos_muhat:
+            return "muhat";
+        case eos_munu:
+            return "munu";
+        default:
+            return "invalid table quantity";
+    }
+}
+

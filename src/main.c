@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "median_filter.h"
+#include "options.h"
 #include "stellar_collapse_eos.h"
 #include "utils.h"
 
@@ -10,22 +11,57 @@ int
 main(int argc, char **argv)
 {
 
-    if(argc < 2 || argc > 3) {
-        info("Usage: %s <input file> [output file]\n", argv[0]);
+    if(argc < 2 || (argc % 2 != 0)) {
+        info(
+            "Usage: %s [-o <outfile>] [-s <smoothing>] [-d <derivs>] <input>\n"
+            "  -o, --output      Output file name. Default <input>_clean.h5\n"
+            "  -s, --smoothing   derivs (default), hydro, all, none (for debugging)\n"
+            "  -d, --derivs      smooth (default), recompute, none (for debugging)\n",
+            argv[0]
+        );
         return 0;
     }
+    options_t opts = parse_cmd_args(argc, argv);
 
-    stellar_collapse_eos *table = read_stellar_collapse_eos_table(argv[1]);
-    info("Successfully read table from file '%s'\n", argv[1]);
+    stellar_collapse_eos *table = read_stellar_collapse_eos_table(opts.input_table_path);
+    info("Successfully read table from file '%s'\n", opts.input_table_path);
 
-    info("Applying median filter to dPdrho_e\n");
-    apply_median_filter(table, eos_dpdrhoe);
+    if(opts.smoother == SMOOTH_ALL) {
+        info("Applying median filter to *all* table quantities:\n");
+        for(int qty = 0; qty < number_of_eos_quantities; qty++) {
+            if(opts.derivs != DERIVS_SMOOTH && (qty == eos_dpdrhoe || qty == eos_dpderho || qty == eos_dedt)) {
+                continue;
+            }
+            info("  %s...\n", stellar_collapse_qty_to_str(qty));
+            apply_median_filter(table, qty);
+        }
+    }
+    else if(opts.smoother == SMOOTH_HYDRO_ONLY) {
+        info("Applying median filter to hydro quantities only (not derivatives)\n");
+        for(int qty = 0; qty < number_of_eos_quantities; qty++) {
+            if(qty == eos_dpdrhoe || qty == eos_dpderho || qty == eos_dedt) {
+                continue;
+            }
+            info("  %s...\n", stellar_collapse_qty_to_str(qty));
+            apply_median_filter(table, qty);
+        }
+    }
+    else if(opts.smoother == SMOOTH_DERIVS_ONLY) {
+        info("Applying median filter to derivatives only\n");
 
-    info("Applying median filter to dPde_rho\n");
-    apply_median_filter(table, eos_dpderho);
+        info("  dpdrhoe...\n");
+        apply_median_filter(table, eos_dpdrhoe);
 
-    info("Applying median filter to dedT\n");
-    apply_median_filter(table, eos_dedt);
+        info("  dpderho...\n");
+        apply_median_filter(table, eos_dpderho);
+
+        info("  dedt...\n");
+        apply_median_filter(table, eos_dedt);
+    }
+
+    if(opts.derivs == DERIVS_RECOMPUTE) {
+        recompute_derivs(table);
+    }
 
     info("Recomputing cs2\n");
     recompute_cs2_and_check_physical_limits(table);
@@ -33,20 +69,8 @@ main(int argc, char **argv)
     info("Validating table\n");
     validate_table(table);
 
-    char outfile[1024] = {0};
-    if(argc == 2) {
-        // Remove .h5 from input file
-        char *dot  = strrchr(argv[1], '.');
-        if(dot) {
-            *dot = '\0';
-        }
-        sprintf(outfile, "%s_clean.h5", argv[1]);
-    }
-    else {
-        sprintf(outfile, "%s", argv[2]);
-    }
-    write_stellar_collapse_eos_table(table, outfile);
-    info("Successfully wrote clean table to file '%s'\n", outfile);
+    write_stellar_collapse_eos_table(table, opts.output_table_path);
+    info("Successfully wrote clean table to file '%s'\n", opts.output_table_path);
 
     free(table);
 
