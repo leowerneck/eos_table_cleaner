@@ -22,6 +22,9 @@ main(int argc, char **argv)
         return 0;
     }
     options_t opts = parse_cmd_args(argc, argv);
+    if(opts.derivs == DERIVS_RECOMPUTE) {
+        error(UNSUPPORTED_FEATURE, "Recompute derivatives it not yet supported.\n");
+    }
 
     stellar_collapse_eos *table = read_stellar_collapse_eos_table(opts.input_table_path);
     info("Successfully read table from file '%s'\n", opts.input_table_path);
@@ -59,9 +62,9 @@ main(int argc, char **argv)
         apply_median_filter(table, eos_dedt);
     }
 
-    if(opts.derivs == DERIVS_RECOMPUTE) {
-        recompute_derivs(table);
-    }
+    // if(opts.derivs == DERIVS_RECOMPUTE) {
+    //     recompute_derivs(table);
+    // }
 
     info("Recomputing cs2\n");
     recompute_cs2_and_check_physical_limits(table);

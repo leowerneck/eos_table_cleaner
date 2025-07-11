@@ -171,12 +171,12 @@ validate_table(stellar_collapse_eos *table)
     CHECK_DATASETS_ARE_FINITE(inf);
 }
 
-void
-recompute_derivs(stellar_collapse_eos *table)
-{
-    (void)table;
-    warn("Function to recompute derivatives it not yet supported.\n");
-}
+// void
+// recompute_derivs(stellar_collapse_eos *table)
+// {
+//     (void)table;
+//     error(UNSUPPORTED_FEATURE, "Recompute derivatives it not yet supported.\n");
+// }
 
 char *
 stellar_collapse_qty_to_str(stellar_collapse_eos_quantity qty)

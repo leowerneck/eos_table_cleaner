@@ -34,6 +34,7 @@ typedef enum
     UNKNOWN_OPTION,
     INVALID_SMOOTHER,
     INVALID_DERIVS,
+    UNSUPPORTED_FEATURE,
 } error_t;
 
 /**
