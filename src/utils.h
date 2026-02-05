@@ -31,10 +31,10 @@ typedef enum
     HDF5_DATASET_WRITE_FAILED,    ///< Failed to write to an HDF5 dataset.
     HDF5_DATASET_CREATE_FAILED,   ///< Failed to create an HDF5 dataset.
     HDF5_DATASPACE_CREATE_FAILED, ///< Failed to create an HDF5 dataspace.
-    UNKNOWN_OPTION,
-    INVALID_SMOOTHER,
-    INVALID_DERIVS,
-    UNSUPPORTED_FEATURE,
+    UNKNOWN_OPTION,               ///< Unknown option.
+    INVALID_SMOOTHER,             ///< Invalid smoothing option.
+    INVALID_DERIVS,               ///< Invalid derivative smoothing option.
+    UNSUPPORTED_FEATURE,          ///< Feature not yet supported.
 } error_t;
 
 /**
@@ -95,28 +95,28 @@ void *malloc_or_error(const size_t size);
  * @param format The format string for the error message.
  * @param ... Optional arguments for the format string.
  */
-#define ERROR(key, format, ...)                                                                                        \
-    fprintf(stderr, "(error) File: %s\n(error) Line: %d\n(error) Func: %s\n", __FILE__, __LINE__, __func__);           \
+#define ERROR(key, format, ...)                                                                              \
+    fprintf(stderr, "(error) File: %s\n(error) Line: %d\n(error) Func: %s\n", __FILE__, __LINE__, __func__); \
     error(key, format, ##__VA_ARGS__)
 
-#define CHECK_FINITE(new, old, func)                                                                                   \
-    if(is##func(new)) {                                                                                                \
-        if(is##func(old)) {                                                                                            \
-            warn("%llu: BAD - both are %s\n", index, #func);                                                           \
-        }                                                                                                              \
-        else {                                                                                                         \
-            warn("%llu: WORSE - new is %s\n", index, #func);                                                           \
-        }                                                                                                              \
+#define CHECK_FINITE(new, old, func)                         \
+    if(is##func(new)) {                                      \
+        if(is##func(old)) {                                  \
+            warn("%llu: BAD - both are %s\n", index, #func); \
+        }                                                    \
+        else {                                               \
+            warn("%llu: WORSE - new is %s\n", index, #func); \
+        }                                                    \
     }
 
-#define CHECK_BOUNDS(new, old, op, bound)                                                                              \
-    if((new)op(bound)) {                                                                                               \
-        if((old)op(bound)) {                                                                                           \
-            warn("%llu: BAD - both are %s %g\n", index, #op, (bound));                                                 \
-        }                                                                                                              \
-        else {                                                                                                         \
-            warn("%llu: WORSE - new is %s %g\n", index, #op, (bound));                                                 \
-        }                                                                                                              \
+#define CHECK_BOUNDS(new, old, op, bound)                              \
+    if((new)op(bound)) {                                               \
+        if((old)op(bound)) {                                           \
+            warn("%llu: BAD - both are %s %g\n", index, #op, (bound)); \
+        }                                                              \
+        else {                                                         \
+            warn("%llu: WORSE - new is %s %g\n", index, #op, (bound)); \
+        }                                                              \
     }
 
 #endif // UTILS_H

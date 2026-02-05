@@ -54,7 +54,7 @@ apply_median_filter(stellar_collapse_eos *table, stellar_collapse_eos_quantity n
 
     // filter, overwriting as needed
 #ifdef _OPENMP
-#pragma omp parallel for collapse(3)
+#    pragma omp parallel for collapse(3)
 #endif
     for(u32 iy = MF_W; iy < ny - MF_W; ++iy) {
         for(u32 it = MF_W; it < nt - MF_W; ++it) {

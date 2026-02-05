@@ -83,9 +83,9 @@ free_stellar_collapse_eos_table(stellar_collapse_eos *table)
     free(table);
 }
 
-#define CHECK_SCALAR(name)                                                                                             \
-    if(table1->name != table2->name) {                                                                                 \
-        warn("Error in %s: %g != %g\n", #name, (f64)table1->name, (f64)table2->name);                                  \
+#define CHECK_SCALAR(name)                                                            \
+    if(table1->name != table2->name) {                                                \
+        warn("Error in %s: %g != %g\n", #name, (f64)table1->name, (f64)table2->name); \
     }
 
 void
@@ -137,22 +137,22 @@ validate_increasing_monotonically(const u64 size, const f64 *data, const char *n
     return count;
 }
 
-#define CHECK_DATASETS_ARE_FINITE(func)                                                                                \
-    for(u32 n = 0; n < number_of_eos_quantities; n++) {                                                                \
-        const char *name         = dataset_names[n];                                                                   \
-        u64         local_errors = 0;                                                                                  \
-        for(u64 i = 0; i < size; i++) {                                                                                \
-            if(isnan(table->data[n][i])) {                                                                             \
-                warn("Found %s in dataset '%s', index %lu\n", #func, name, i);                                         \
-                local_errors++;                                                                                        \
-            }                                                                                                          \
-        }                                                                                                              \
-        if(local_errors) {                                                                                             \
-            warn("Dataset '%s' has %lu %ss out of %lu points\n", name, local_errors, #func, size);                     \
-        }                                                                                                              \
-        else {                                                                                                         \
-            info("Dataset '%s' does not contain %ss!\n", name, #func);                                                 \
-        }                                                                                                              \
+#define CHECK_DATASETS_ARE_FINITE(func)                                                            \
+    for(u32 n = 0; n < number_of_eos_quantities; n++) {                                            \
+        const char *name         = dataset_names[n];                                               \
+        u64         local_errors = 0;                                                              \
+        for(u64 i = 0; i < size; i++) {                                                            \
+            if(isnan(table->data[n][i])) {                                                         \
+                warn("Found %s in dataset '%s', index %lu\n", #func, name, i);                     \
+                local_errors++;                                                                    \
+            }                                                                                      \
+        }                                                                                          \
+        if(local_errors) {                                                                         \
+            warn("Dataset '%s' has %lu %ss out of %lu points\n", name, local_errors, #func, size); \
+        }                                                                                          \
+        else {                                                                                     \
+            info("Dataset '%s' does not contain %ss!\n", name, #func);                             \
+        }                                                                                          \
     }
 
 void
@@ -224,4 +224,3 @@ stellar_collapse_qty_to_str(stellar_collapse_eos_quantity qty)
             return "invalid table quantity";
     }
 }
-
