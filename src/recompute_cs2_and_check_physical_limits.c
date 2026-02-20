@@ -24,7 +24,7 @@ recompute_cs2_and_check_physical_limits(stellar_collapse_eos *table)
                 const u64 index    = INDEX(ir, it, iy);
                 const f64 rho      = pow(10.0, table->log10_rho[ir]);
                 const f64 press    = pow(10.0, table->data[eos_logpress][index]);
-                const f64 eps      = pow(10.0, table->data[eos_logenergy][index]);
+                const f64 eps      = pow(10.0, table->data[eos_logenergy][index]) - table->energy_shift;
                 const f64 dPdrho_e = table->data[eos_dpdrhoe][index];
                 const f64 dPde_rho = table->data[eos_dpderho][index];
 
