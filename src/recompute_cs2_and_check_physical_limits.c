@@ -12,11 +12,11 @@ void
 recompute_cs2_and_check_physical_limits(stellar_collapse_eos *table)
 {
 
-    bool negative_cs2     = false;
-    bool superluminal_cs2 = false;
+    i32 negative_cs2_count     = 0;
+    i32 superluminal_cs2_count = 0;
 
 #ifdef _OPENMP
-#    pragma omp parallel for collapse(3) reduction(|| : negative_cs2, superluminal_cs2)
+#    pragma omp parallel for collapse(3) reduction(+: negative_cs2_count, superluminal_cs2_count)
 #endif
     for(i32 iy = 0; iy < table->n_ye; iy++) {
         for(i32 it = 0; it < table->n_temperature; it++) {
@@ -35,28 +35,37 @@ recompute_cs2_and_check_physical_limits(stellar_collapse_eos *table)
                 }
 
                 // Recompute cs2 and check physical bounds
-                f64 cs2_new = bulk_modulus / rho;
+                const f64 h = SPEED_OF_LIGHT_SQUARED_CGS + eps + press / rho;
+                const f64 w = rho * h;
+                f64 cs2_new = SPEED_OF_LIGHT_SQUARED_CGS * bulk_modulus / w;
 
                 if(cs2_new < 0) {
-                    warn("Found negative cs2: %g (index %lu)\n", cs2_new, index);
-                    negative_cs2 = true;
+                    negative_cs2_count++;
                 }
 
                 // Compute the enthalpy
-                const f64 h = SPEED_OF_LIGHT_SQUARED_CGS + eps + press / rho;
-                if((cs2_new / h) > SPEED_OF_LIGHT_SQUARED_CGS) {
-                    warn("Found superluminal cs2: %g (index %lu)\n", cs2_new / h / SPEED_OF_LIGHT_SQUARED_CGS, index);
-                    superluminal_cs2 = true;
+                if(cs2_new > SPEED_OF_LIGHT_SQUARED_CGS) {
+                    superluminal_cs2_count++;
                 }
 
                 table->data[eos_cs2][index] = cs2_new;
             }
         }
     }
-    if(!negative_cs2) {
+    if(!negative_cs2_count) {
         info("No points in the table have a negative cs2!\n");
     }
-    if(!superluminal_cs2) {
+    else {
+        const i32 size = table->n_rho * table->n_temperature * table->n_ye;
+        warn("Found %lu points (~%.1f%%) with negative cs2! Applied ceiling (speed of light).\n",
+             negative_cs2_count, 100.0 * ((double)negative_cs2_count)/((double)size));
+    }
+    if(!superluminal_cs2_count) {
         info("No points in the table have a superluminal cs2!\n");
+    }
+    else {
+        const i32 size = table->n_rho * table->n_temperature * table->n_ye;
+        warn("Found %lu points (~%.1f%%) with superluminal cs2! Applied ceiling (speed of light).\n",
+             superluminal_cs2_count, 100.0 * ((double)superluminal_cs2_count)/((double)size));
     }
 }
